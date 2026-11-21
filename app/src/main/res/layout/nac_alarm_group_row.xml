@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="?attr/selectableItemBackground"
+	android:gravity="center_vertical"
+	android:orientation="horizontal">
+
+	<!-- Name and number of alarms -->
+	<LinearLayout
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:orientation="vertical">
+
+		<com.google.android.material.textview.MaterialTextView
+			android:id="@+id/tv_alarm_group_name"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ellipsize="end"
+			android:maxLines="1"
+			android:textSize="@dimen/tsz_normal"
+			/>
+
+		<com.google.android.material.textview.MaterialTextView
+			android:id="@+id/tv_alarm_group_count"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:alpha="0.7"
+			/>
+
+	</LinearLayout>
+
+	<!-- Switch to turn all alarms in the group on or off -->
+	<androidx.appcompat.widget.SwitchCompat
+		android:id="@+id/switch_alarm_group"
+		android:contentDescription="@string/cd_alarm_group_switch"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingTop="@dimen/tiny"
+		android:paddingBottom="@dimen/tiny"
+		app:switchMinWidth="@dimen/isz_attention"
+		/>
+
+</LinearLayout>

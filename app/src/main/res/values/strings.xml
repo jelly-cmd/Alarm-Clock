@@ -643,4 +643,24 @@
 
 	<string name="float_duration_seconds">{count, plural, one{{count} second} other{{count} seconds}}</string>
 
+
+	<!-- Alarm groups -->
+	<string name="alarm_group_title">Groups</string>
+	<string name="alarm_group_new">New group</string>
+	<string name="alarm_group_name_hint">Group name</string>
+	<string name="alarm_group_rename">Rename group</string>
+	<string name="alarm_group_select_alarms">Choose alarms</string>
+	<string name="alarm_group_delete">Delete group</string>
+	<string name="alarm_group_delete_message">The alarms in this group will not be deleted.</string>
+	<string name="alarm_group_none">No group</string>
+	<string name="alarm_group_add_to_group">Move to group</string>
+	<string name="alarm_group_empty_name">Please enter a name</string>
+	<string name="alarm_group_no_alarms">No alarms yet</string>
+	<string name="alarm_group_some_not_changed">Active or snoozed alarms were not changed</string>
+	<string name="cd_alarm_group_switch">Turn all alarms in this group on or off</string>
+	<plurals name="alarm_group_alarm_count">
+		<item quantity="one">%d alarm</item>
+		<item quantity="other">%d alarms</item>
+	</plurals>
+
 </resources>

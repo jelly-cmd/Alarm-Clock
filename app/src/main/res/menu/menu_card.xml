@@ -37,4 +37,14 @@
 			/>
 	</group>
 
+	<!-- Alarm group -->
+	<group android:id="@+id/alarm_group">
+		<item
+			android:id="@+id/menu_move_to_alarm_group"
+			android:orderInCategory="700"
+			android:title="@string/alarm_group_add_to_group"
+			app:showAsAction="never"
+			/>
+	</group>
+
 </menu>

@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.annotation.OptIn
 import androidx.core.view.MenuCompat
 import androidx.core.view.get
@@ -56,6 +57,8 @@ import com.nfcalarmclock.alarm.card.NacAlarmCardHolder.OnCardVolumeChangedListen
 import com.nfcalarmclock.alarm.card.NacAlarmCardTouchHelper
 import com.nfcalarmclock.alarm.db.NacAlarm
 import com.nfcalarmclock.alarm.db.NacNextAlarm
+import com.nfcalarmclock.alarm.group.NacAlarmGroupController
+import com.nfcalarmclock.alarm.group.NacAlarmGroupViewModel
 import com.nfcalarmclock.alarm.options.NacAlarmOptionsDialog
 import com.nfcalarmclock.alarm.options.dateandtime.NacDateAndTimePickerDialog
 import com.nfcalarmclock.alarm.options.dismissoptions.NacDismissEarlyService
@@ -119,6 +122,16 @@ class NacShowAlarmsFragment
 	 * NFC tag view model.
 	 */
 	private val nfcTagViewModel: NacNfcTagViewModel by viewModels()
+
+	/**
+	 * Alarm group view model.
+	 */
+	private val alarmGroupViewModel: NacAlarmGroupViewModel by viewModels()
+
+	/**
+	 * Shows the alarm groups and turns the alarms of a group on/off together.
+	 */
+	private lateinit var alarmGroupController: NacAlarmGroupController
 
 	/**
 	 * Shared preferences.
@@ -589,6 +602,7 @@ class NacShowAlarmsFragment
 		})
 
 		// Setup
+		setupAlarmGroups(view)
 		setupLiveDataObservers()
 		setupAlarmCardAdapter()
 		setupRecyclerView()
@@ -1119,6 +1133,16 @@ class NacShowAlarmsFragment
 							}
 						}
 
+						// Move to an alarm group
+						R.id.menu_move_to_alarm_group ->
+						{
+							item.setOnMenuItemClickListener { _ ->
+								NacLog.i("Move alarm to group: ${alarm.id}")
+								alarmGroupController.showMoveAlarmDialog(alarm)
+								true
+							}
+						}
+
 						// Unknown
 						else -> {}
 
@@ -1195,6 +1219,49 @@ class NacShowAlarmsFragment
 
 		// Add the first alarm
 		addFirstAlarm()
+	}
+
+	/**
+	 * Setup the alarm groups shown above the alarm list.
+	 */
+	private fun setupAlarmGroups(view: View)
+	{
+		val context = requireContext()
+
+		// Create the controller
+		alarmGroupController = NacAlarmGroupController(
+			context,
+			sharedPreferences,
+			viewLifecycleOwner.lifecycleScope,
+			alarmViewModel,
+			alarmGroupViewModel,
+			view.findViewById<LinearLayout>(R.id.ll_alarm_group_rows),
+			onAlarmChanged = { alarm ->
+
+				// Same as when the switch on an alarm card is changed, except for
+				// the snackbar, since many alarms can change at once
+				NacDismissEarlyService.stopService(context, alarm)
+				NacUpcomingReminderService.stopService(context, alarm)
+				updateAlarm(alarm)
+
+			},
+			onAlarmsChanged = {
+				refreshAllWidgets(context)
+			})
+
+		// New group button
+		view.findViewById<View>(R.id.btn_new_alarm_group).setOnClickListener {
+			alarmGroupController.showNewGroupDialog()
+		}
+
+		// Observe the groups and alarms
+		alarmGroupViewModel.allAlarmGroups.observe(viewLifecycleOwner) { groups ->
+			alarmGroupController.onGroupsChanged(groups)
+		}
+
+		alarmViewModel.allAlarms.observe(viewLifecycleOwner) { alarms ->
+			alarmGroupController.onAlarmsChanged(alarms)
+		}
 	}
 
 	/**

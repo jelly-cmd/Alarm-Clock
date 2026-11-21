@@ -17,6 +17,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.nfcalarmclock.alarm.db.NacAlarm
 import com.nfcalarmclock.alarm.db.NacAlarmDao
 import com.nfcalarmclock.alarm.db.NacAlarmTypeConverters
+import com.nfcalarmclock.alarm.group.db.NacAlarmGroup
+import com.nfcalarmclock.alarm.group.db.NacAlarmGroupDao
 import com.nfcalarmclock.db.NacAlarmDatabase.AddAutoDismissAndSnoozeSettingsToAllAlarmsMigration
 import com.nfcalarmclock.db.NacAlarmDatabase.ChangeFlashlightOnOffDurationTypeToStringMigration
 import com.nfcalarmclock.db.NacAlarmDatabase.ClearAllStatisticsMigration
@@ -143,7 +145,7 @@ fun NacAlarm.updateMediaFromDb(
 /**
  * Store alarms in a Room database.
  */
-@Database(version = 51,
+@Database(version = 52,
 	entities = [
 		NacAlarm::class,
 		NacAlarmCreatedStatistic::class,
@@ -152,7 +154,8 @@ fun NacAlarm.updateMediaFromDb(
 		NacAlarmMissedStatistic::class,
 		NacAlarmSnoozedStatistic::class,
 		NacNfcTag::class,
-		NacTimer::class],
+		NacTimer::class,
+		NacAlarmGroup::class],
 	autoMigrations = [
 		AutoMigration(from = 1,  to = 2),
 		AutoMigration(from = 2,  to = 3, spec = ClearAllStatisticsMigration::class),
@@ -204,6 +207,7 @@ fun NacAlarm.updateMediaFromDb(
 		AutoMigration(from = 48, to = 49),
 		AutoMigration(from = 49, to = 50),
 		AutoMigration(from = 50, to = 51),
+		AutoMigration(from = 51, to = 52),
 	]
 )
 @TypeConverters(NacAlarmTypeConverters::class, NacStatisticTypeConverters::class)
@@ -215,6 +219,11 @@ abstract class NacAlarmDatabase
 	 * Store alarms in the database.
 	 */
 	abstract fun alarmDao(): NacAlarmDao
+
+	/**
+	 * Store alarm groups in the database.
+	 */
+	abstract fun alarmGroupDao(): NacAlarmGroupDao
 
 	/**
 	 * Store created alarm statistics in the database.
@@ -1116,6 +1125,15 @@ class NacAlarmDatabaseModule
 	fun provideAlarmDao(db: NacAlarmDatabase) : NacAlarmDao
 	{
 		return db.alarmDao()
+	}
+
+	/**
+	 * Provide the alarm group data access object.
+	 */
+	@Provides
+	fun provideAlarmGroupDao(db: NacAlarmDatabase) : NacAlarmGroupDao
+	{
+		return db.alarmGroupDao()
 	}
 
 	/**

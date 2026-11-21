@@ -643,4 +643,24 @@
 
 	<string name="float_duration_seconds">{count, plural, one{{count} Sekunde} other{{count} Sekunden}}</string>
 
+
+	<!-- Alarm groups -->
+	<string name="alarm_group_title">Gruppen</string>
+	<string name="alarm_group_new">Neue Gruppe</string>
+	<string name="alarm_group_name_hint">Name der Gruppe</string>
+	<string name="alarm_group_rename">Gruppe umbenennen</string>
+	<string name="alarm_group_select_alarms">Wecker auswählen</string>
+	<string name="alarm_group_delete">Gruppe löschen</string>
+	<string name="alarm_group_delete_message">Die Wecker in dieser Gruppe werden nicht gelöscht.</string>
+	<string name="alarm_group_none">Keine Gruppe</string>
+	<string name="alarm_group_add_to_group">In Gruppe verschieben</string>
+	<string name="alarm_group_empty_name">Bitte einen Namen eingeben</string>
+	<string name="alarm_group_no_alarms">Noch keine Wecker vorhanden</string>
+	<string name="alarm_group_some_not_changed">Aktive oder schlummernde Wecker wurden nicht geändert</string>
+	<string name="cd_alarm_group_switch">Alle Wecker dieser Gruppe ein- oder ausschalten</string>
+	<plurals name="alarm_group_alarm_count">
+		<item quantity="one">%d Wecker</item>
+		<item quantity="other">%d Wecker</item>
+	</plurals>
+
 </resources>
