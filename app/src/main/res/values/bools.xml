@@ -24,7 +24,7 @@
 
 	<!-- Appearance -->
 	<bool name="default_show_hide_vibrate_button">true</bool>
-	<bool name="default_show_hide_nfc_button">true</bool>
+	<bool name="default_show_hide_nfc_button">false</bool>
 	<bool name="default_show_hide_flashlight_button">true</bool>
 	<bool name="default_style_should_show_card_button_labels">true</bool>
 

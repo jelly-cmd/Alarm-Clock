@@ -2290,7 +2290,7 @@ class NacSharedPreferences(context: Context)
 		get()
 		{
 			val key = resources.getString(R.string.key_show_hide_nfc_button)
-			val defaultValue = true
+			val defaultValue = resources.getBoolean(R.bool.default_show_hide_nfc_button)
 
 			return instance.getBoolean(key, defaultValue)
 		}
