@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:gravity="center_vertical"
+	android:orientation="horizontal">
+
+	<!-- Time and name of the alarm -->
+	<com.google.android.material.textview.MaterialTextView
+		android:id="@+id/tv_alarm_group_member_label"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:ellipsize="end"
+		android:maxLines="1"
+		/>
+
+	<!-- Switch for this one alarm -->
+	<androidx.appcompat.widget.SwitchCompat
+		android:id="@+id/switch_alarm_group_member"
+		android:contentDescription="@string/cd_alarm_group_member_switch"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:switchMinWidth="@dimen/isz_attention"
+		/>
+
+</LinearLayout>
