@@ -22,7 +22,8 @@
 			android:id="@+id/nac_collapsed_alarm"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:paddingTop="@dimen/normal"
+			android:paddingTop="@dimen/tiny"
+			android:gravity="center_vertical"
 			android:orientation="horizontal">
 
 			<!-- Time -->
@@ -39,7 +40,7 @@
 					android:id="@+id/nac_time"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:textSize="@dimen/tsz_attention"
+					android:textSize="@dimen/tsz_large"
 					/>
 
 				<TextView
@@ -48,7 +49,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginStart="@dimen/tiny"
-					android:textSize="@dimen/tsz_medium"
+					android:textSize="@dimen/tsz_caption"
 					/>
 			</LinearLayout> <!-- Time -->
 
@@ -63,8 +64,8 @@
 				android:id="@+id/nac_switch"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:paddingTop="@dimen/normal"
-				android:paddingBottom="@dimen/normal"
+				android:paddingTop="@dimen/zero"
+				android:paddingBottom="@dimen/zero"
 				app:switchMinWidth="@dimen/isz_attention"
 				/>
 		</LinearLayout> <!-- Collapsed alarm -->
