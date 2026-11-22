@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
 	<!-- App -->
-	<string name="app_name">এনএফসি অ্যালার্ম ঘড়ি</string>
+	<string name="app_name">Jelly Alarm</string>
 	<string name="app_developer">গাবে গঞ্জালেজ</string>
 
 	<!-- Consolidate -->

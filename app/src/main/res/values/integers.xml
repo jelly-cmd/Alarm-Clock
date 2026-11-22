@@ -8,9 +8,9 @@
 	<integer name="default_snooze_duration_index">4</integer>
 
 	<integer name="default_color">0xffffffff</integer>
-	<integer name="default_theme_color">0xfffb8c00</integer>
+	<integer name="default_theme_color">0xff43a047</integer>
 	<integer name="default_name_color">0xff00c0fb</integer>
-	<integer name="default_days_color">0xfffb8c00</integer>
+	<integer name="default_days_color">0xff43a047</integer>
 	<integer name="default_time_color">0xffffffff</integer>
 	<integer name="default_am_color">0xffffffff</integer>
 	<integer name="default_pm_color">0xffffffff</integer>
@@ -36,6 +36,6 @@
 	<integer name="default_clock_widget_color_date">0xffffffff</integer>
 	<integer name="default_clock_widget_color_am_pm">0xffffffff</integer>
 	<integer name="default_clock_widget_color_alarm_icon">0xffffffff</integer>
-	<integer name="default_clock_widget_color_alarm_time">0xfffb8c00</integer>
+	<integer name="default_clock_widget_color_alarm_time">0xff43a047</integer>
 
 </resources>

@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
 	<!-- App -->
-	<string name="app_name">NFC対応目覚まし時計</string>
+	<string name="app_name">Jelly Alarm</string>
 	<string name="app_developer">ゲイブ・ゴンザレス</string>
 
 	<!-- Consolidate -->

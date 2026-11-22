@@ -14,7 +14,7 @@
 	<color name="gray_dark2">#1a1a1a</color>
 	<color name="gray">#262626</color>
 	<color name="gray_light">#3c3c3c</color>
-	<color name="orange">#fb8c00</color>
+	<color name="orange">#43a047</color><!-- Jelly Alarm: green instead of orange -->
 	<color name="red">#ff0000</color>
 	<color name="red_dull">#c00000</color>
 	<color name="red_light">#ff2020</color>
@@ -25,7 +25,7 @@
 	<color name="white">#ffffff</color>
 	<color name="white_dull">#b2b2b2</color>
 	<color name="white_duller">#7c7c7c</color>
-	<color name="ic_launcher_background">#FF5F2D</color>
+	<color name="ic_launcher_background">#2E7D32</color>
 
 	<!--
 	<color name="blue">#1d00fb</color>
