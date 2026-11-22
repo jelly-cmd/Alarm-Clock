@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
@@ -83,6 +84,11 @@ class NacAlarmGroupController(
 	private var alarms: List<NacAlarm> = emptyList()
 
 	/**
+	 * IDs of the groups that are open and show their alarms.
+	 */
+	private val expandedGroupIds: MutableSet<Long> = mutableSetOf()
+
+	/**
 	 * Called when the list of groups changes.
 	 */
 	fun onGroupsChanged(newGroups: List<NacAlarmGroup>)
@@ -133,10 +139,15 @@ class NacAlarmGroupController(
 		{
 			// Inflate the row
 			val row = inflater.inflate(R.layout.nac_alarm_group_row, rowContainer, false)
+			val header: View = row.findViewById(R.id.alarm_group_header)
+			val expandView: ImageView = row.findViewById(R.id.iv_alarm_group_expand)
 			val nameView: MaterialTextView = row.findViewById(R.id.tv_alarm_group_name)
 			val countView: MaterialTextView = row.findViewById(R.id.tv_alarm_group_count)
+			val editView: ImageView = row.findViewById(R.id.iv_alarm_group_edit)
 			val switch: SwitchCompat = row.findViewById(R.id.switch_alarm_group)
-			val members = alarmsInGroup(group)
+			val memberContainer: LinearLayout = row.findViewById(R.id.ll_alarm_group_members)
+			val members = alarmsInGroup(group).sorted()
+			val isExpanded = expandedGroupIds.contains(group.id)
 
 			// Name and count
 			nameView.text = group.name
@@ -148,11 +159,38 @@ class NacAlarmGroupController(
 			switch.isChecked = members.any { it.isEnabled }
 			switch.isEnabled = members.isNotEmpty()
 			switch.setOnCheckedChangeListener { _, state ->
-				setGroupEnabled(group, state)
+				setAlarmsEnabled(group.alarmIdSet(), state)
 			}
 
-			// Tap the row to edit the group
-			row.setOnClickListener {
+			// Alarms of the group, like a dropdown
+			expandView.rotation = if (isExpanded) 180f else 0f
+			memberContainer.visibility = if (isExpanded && members.isNotEmpty()) View.VISIBLE else View.GONE
+
+			if (isExpanded)
+			{
+				for (alarm in members)
+				{
+					memberContainer.addView(createMemberRow(inflater, memberContainer, alarm))
+				}
+			}
+
+			// Tap the header to open or close the group
+			header.setOnClickListener {
+				if (!expandedGroupIds.remove(group.id))
+				{
+					expandedGroupIds.add(group.id)
+				}
+
+				refreshRows()
+			}
+
+			// Long press the header, or tap the pencil, to edit the group
+			header.setOnLongClickListener {
+				showGroupOptionsDialog(group)
+				true
+			}
+
+			editView.setOnClickListener {
 				showGroupOptionsDialog(group)
 			}
 
@@ -163,17 +201,37 @@ class NacAlarmGroupController(
 	}
 
 	/**
-	 * Turn all alarms in a group on or off.
+	 * Create the row for one alarm inside an open group.
 	 */
-	private fun setGroupEnabled(group: NacAlarmGroup, state: Boolean)
+	private fun createMemberRow(inflater: LayoutInflater, parent: LinearLayout, alarm: NacAlarm): View
 	{
-		NacLog.i("Setting alarm group ${group.id} enabled=$state")
+		val row = inflater.inflate(R.layout.nac_alarm_group_member, parent, false)
+		val labelView: MaterialTextView = row.findViewById(R.id.tv_alarm_group_member_label)
+		val switch: SwitchCompat = row.findViewById(R.id.switch_alarm_group_member)
+
+		labelView.text = alarmLabel(alarm)
+		labelView.alpha = if (alarm.isEnabled) 1f else 0.5f
+
+		switch.setupSwitchColor(sharedPreferences)
+		switch.isChecked = alarm.isEnabled
+		switch.setOnCheckedChangeListener { _, state ->
+			setAlarmsEnabled(setOf(alarm.id), state)
+		}
+
+		return row
+	}
+
+	/**
+	 * Turn alarms on or off, for example all alarms in a group.
+	 */
+	private fun setAlarmsEnabled(ids: Set<Long>, state: Boolean)
+	{
+		NacLog.i("Setting alarms $ids enabled=$state")
 
 		scope.launch {
 
 			// Get fresh copies of the alarms from the database so that the alarm list
 			// sees them as changed and redraws the cards
-			val ids = group.alarmIdSet()
 			val groupAlarms = alarmViewModel.getAllAlarms().filter { ids.contains(it.id) }
 			var skippedAny = false
 			var changedAny = false

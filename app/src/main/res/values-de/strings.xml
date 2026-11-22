@@ -657,6 +657,9 @@
 	<string name="alarm_group_empty_name">Bitte einen Namen eingeben</string>
 	<string name="alarm_group_no_alarms">Noch keine Wecker vorhanden</string>
 	<string name="alarm_group_some_not_changed">Aktive oder schlummernde Wecker wurden nicht geändert</string>
+	<string name="alarm_group_edit">Gruppe bearbeiten</string>
+	<string name="cd_alarm_group_expand">Wecker dieser Gruppe ein- oder ausklappen</string>
+	<string name="cd_alarm_group_member_switch">Diesen Wecker ein- oder ausschalten</string>
 	<string name="cd_alarm_group_switch">Alle Wecker dieser Gruppe ein- oder ausschalten</string>
 	<plurals name="alarm_group_alarm_count">
 		<item quantity="one">%d Wecker</item>

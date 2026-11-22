@@ -4,44 +4,84 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="?attr/selectableItemBackground"
-	android:gravity="center_vertical"
-	android:orientation="horizontal">
+	android:orientation="vertical">
 
-	<!-- Name and number of alarms -->
+	<!-- Group header: tap to show/hide the alarms, long press for options -->
 	<LinearLayout
-		android:layout_width="0dp"
+		android:id="@+id/alarm_group_header"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:orientation="vertical">
+		android:background="?attr/selectableItemBackground"
+		android:gravity="center_vertical"
+		android:orientation="horizontal">
 
-		<com.google.android.material.textview.MaterialTextView
-			android:id="@+id/tv_alarm_group_name"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:ellipsize="end"
-			android:maxLines="1"
-			android:textSize="@dimen/tsz_normal"
+		<!-- Arrow that shows if the group is open -->
+		<ImageView
+			android:id="@+id/iv_alarm_group_expand"
+			android:contentDescription="@string/cd_alarm_group_expand"
+			android:layout_width="@dimen/isz_normal"
+			android:layout_height="@dimen/isz_normal"
+			android:layout_marginEnd="@dimen/tiny"
+			android:src="@drawable/expand"
 			/>
 
-		<com.google.android.material.textview.MaterialTextView
-			android:id="@+id/tv_alarm_group_count"
-			android:layout_width="match_parent"
+		<!-- Name and number of alarms -->
+		<LinearLayout
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:alpha="0.7"
+			android:layout_weight="1"
+			android:orientation="vertical">
+
+			<com.google.android.material.textview.MaterialTextView
+				android:id="@+id/tv_alarm_group_name"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:ellipsize="end"
+				android:maxLines="1"
+				android:textSize="@dimen/tsz_normal"
+				/>
+
+			<com.google.android.material.textview.MaterialTextView
+				android:id="@+id/tv_alarm_group_count"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:alpha="0.7"
+				/>
+
+		</LinearLayout>
+
+		<!-- Edit the group -->
+		<ImageView
+			android:id="@+id/iv_alarm_group_edit"
+			android:contentDescription="@string/alarm_group_edit"
+			android:layout_width="@dimen/isz_xxlarge"
+			android:layout_height="@dimen/isz_xxlarge"
+			android:padding="@dimen/tiny"
+			android:background="?attr/selectableItemBackgroundBorderless"
+			android:src="@drawable/edit"
+			/>
+
+		<!-- Switch to turn all alarms in the group on or off -->
+		<androidx.appcompat.widget.SwitchCompat
+			android:id="@+id/switch_alarm_group"
+			android:contentDescription="@string/cd_alarm_group_switch"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingTop="@dimen/tiny"
+			android:paddingBottom="@dimen/tiny"
+			app:switchMinWidth="@dimen/isz_attention"
 			/>
 
 	</LinearLayout>
 
-	<!-- Switch to turn all alarms in the group on or off -->
-	<androidx.appcompat.widget.SwitchCompat
-		android:id="@+id/switch_alarm_group"
-		android:contentDescription="@string/cd_alarm_group_switch"
-		android:layout_width="wrap_content"
+	<!-- Alarms of the group, shown when the group is open -->
+	<LinearLayout
+		android:id="@+id/ll_alarm_group_members"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingTop="@dimen/tiny"
-		android:paddingBottom="@dimen/tiny"
-		app:switchMinWidth="@dimen/isz_attention"
+		android:paddingStart="@dimen/xlarge"
+		android:orientation="vertical"
+		android:visibility="gone"
 		/>
 
 </LinearLayout>

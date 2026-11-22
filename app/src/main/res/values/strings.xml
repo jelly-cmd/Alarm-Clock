@@ -657,6 +657,9 @@
 	<string name="alarm_group_empty_name">Please enter a name</string>
 	<string name="alarm_group_no_alarms">No alarms yet</string>
 	<string name="alarm_group_some_not_changed">Active or snoozed alarms were not changed</string>
+	<string name="alarm_group_edit">Edit group</string>
+	<string name="cd_alarm_group_expand">Show or hide the alarms of this group</string>
+	<string name="cd_alarm_group_member_switch">Turn this alarm on or off</string>
 	<string name="cd_alarm_group_switch">Turn all alarms in this group on or off</string>
 	<plurals name="alarm_group_alarm_count">
 		<item quantity="one">%d alarm</item>
