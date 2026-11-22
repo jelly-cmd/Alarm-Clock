@@ -68,7 +68,17 @@ class NacAlarmGroupController(
 	/**
 	 * Called once after one or more alarms were changed by a group switch.
 	 */
-	private val onAlarmsChanged: () -> Unit
+	private val onAlarmsChanged: () -> Unit,
+
+	/**
+	 * Called with the IDs of all alarms that are in a group, when the groups change.
+	 */
+	private val onGroupedAlarmIdsChanged: (Set<Long>) -> Unit,
+
+	/**
+	 * Called when an alarm under an open group is tapped.
+	 */
+	private val onAlarmClicked: (NacAlarm) -> Unit
 
 )
 {
@@ -94,6 +104,7 @@ class NacAlarmGroupController(
 	fun onGroupsChanged(newGroups: List<NacAlarmGroup>)
 	{
 		groups = newGroups
+		onGroupedAlarmIdsChanged(newGroups.flatMap { it.alarmIdSet() }.toSet())
 		refreshRows()
 	}
 
@@ -211,6 +222,11 @@ class NacAlarmGroupController(
 
 		labelView.text = alarmLabel(alarm)
 		labelView.alpha = if (alarm.isEnabled) 1f else 0.5f
+
+		// Tap the alarm to show its card in the list, to change it
+		row.setOnClickListener {
+			onAlarmClicked(alarm)
+		}
 
 		switch.setupSwitchColor(sharedPreferences)
 		switch.isChecked = alarm.isEnabled

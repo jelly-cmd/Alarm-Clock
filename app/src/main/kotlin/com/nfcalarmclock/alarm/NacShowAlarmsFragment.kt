@@ -134,6 +134,26 @@ class NacShowAlarmsFragment
 	private lateinit var alarmGroupController: NacAlarmGroupController
 
 	/**
+	 * All alarms from the database, including those hidden because they are in a group.
+	 */
+	private var latestAlarms: List<NacAlarm> = emptyList()
+
+	/**
+	 * IDs of alarms that are in a group. These are only shown under their group.
+	 */
+	private var groupedAlarmIds: Set<Long> = emptySet()
+
+	/**
+	 * ID of an alarm in a group that was tapped, so its card is shown in the list.
+	 */
+	private var revealedAlarmId: Long? = null
+
+	/**
+	 * ID of an alarm card that should be scrolled to and expanded once it is shown.
+	 */
+	private var alarmIdToShow: Long? = null
+
+	/**
 	 * Shared preferences.
 	 */
 	private lateinit var sharedPreferences: NacSharedPreferences
@@ -709,7 +729,7 @@ class NacShowAlarmsFragment
 		// Get the next alarm. Use the parameter when it is supplied, otherwise use the
 		// alarm card adapter list
 		val nextAlarm = nextAlarm
-			?: NacCalendar.getNextAlarm(alarmCardAdapter.currentList)
+			?: NacCalendar.getNextAlarm(latestAlarms)
 
 		// Get the next alarm message
 		val message = NacCalendar.Message.getNext(requireContext(),
@@ -769,6 +789,17 @@ class NacShowAlarmsFragment
 			{
 				// Collapse the card
 				card.doCollapseWithColor()
+			}
+
+			// Expand an alarm that was tapped in a group
+			if (alarm.id == alarmIdToShow)
+			{
+				alarmIdToShow = null
+
+				if (!card.isExpanded)
+				{
+					card.expand()
+				}
 			}
 
 			// Check if the alarm was recently added
@@ -1247,6 +1278,21 @@ class NacShowAlarmsFragment
 			},
 			onAlarmsChanged = {
 				refreshAllWidgets(context)
+			},
+			onGroupedAlarmIdsChanged = { ids ->
+				if (ids != groupedAlarmIds)
+				{
+					groupedAlarmIds = ids
+
+					// Only refresh once the alarms have been loaded
+					if (latestAlarms.isNotEmpty())
+					{
+						refreshVisibleAlarms()
+					}
+				}
+			},
+			onAlarmClicked = { alarm ->
+				showAlarmFromGroup(alarm)
 			})
 
 		// New group button
@@ -1261,6 +1307,71 @@ class NacShowAlarmsFragment
 
 		alarmViewModel.allAlarms.observe(viewLifecycleOwner) { alarms ->
 			alarmGroupController.onAlarmsChanged(alarms)
+		}
+	}
+
+	/**
+	 * Get the alarms that should be shown in the list. Alarms in a group are only
+	 * shown under their group, unless one was tapped there.
+	 */
+	private fun getVisibleAlarms(): List<NacAlarm>
+	{
+		return latestAlarms.filter { !groupedAlarmIds.contains(it.id) || (it.id == revealedAlarmId) }
+	}
+
+	/**
+	 * Merge the visible alarms into the alarm list.
+	 */
+	private fun refreshVisibleAlarms()
+	{
+		val visibleAlarms = getVisibleAlarms()
+
+		// No cards are expanded
+		if (alarmViewModel.expandedAlarmIds.isEmpty())
+		{
+			// Merge and sort the alarms
+			alarmCardAdapterLiveData.mergeSort(visibleAlarms)
+		}
+		// One or more cards is expanded
+		else
+		{
+			// Merge the alarms but do not sort yet
+			alarmCardAdapterLiveData.merge(visibleAlarms, copiedIds = recentlyCopiedAlarmIds)
+		}
+	}
+
+	/**
+	 * Show the card of an alarm that was tapped under its group. Tapping it again
+	 * hides the card again.
+	 */
+	private fun showAlarmFromGroup(alarm: NacAlarm)
+	{
+		if (revealedAlarmId == alarm.id)
+		{
+			revealedAlarmId = null
+			alarmIdToShow = null
+		}
+		else
+		{
+			revealedAlarmId = alarm.id
+			alarmIdToShow = alarm.id
+		}
+
+		refreshVisibleAlarms()
+		scrollToAlarmToShow()
+	}
+
+	/**
+	 * Scroll to the alarm that was tapped in a group, if it is in the list.
+	 */
+	private fun scrollToAlarmToShow()
+	{
+		val id = alarmIdToShow ?: return
+		val index = alarmCardAdapter.currentList.indexOfFirst { it.id == id }
+
+		if (index >= 0)
+		{
+			recyclerView.smoothScrollToPosition(index)
 		}
 	}
 
@@ -1305,28 +1416,20 @@ class NacShowAlarmsFragment
 			// position
 			alarmViewModel.recyclerViewState = recyclerView.layoutManager?.onSaveInstanceState()
 
+			// Keep all alarms, but only show the ones that are not in a group
+			latestAlarms = alarms
+			val visibleAlarms = getVisibleAlarms()
+
 			// Restore the saved sorted order of alarms
-			if (alarmViewModel.sortOrderedAlarmIds.size == alarms.size)
+			if (alarmViewModel.sortOrderedAlarmIds.size == visibleAlarms.size)
 			{
-				alarmCardAdapterLiveData.mergeSort(alarms, order = alarmViewModel.sortOrderedAlarmIds)
+				alarmCardAdapterLiveData.mergeSort(visibleAlarms, order = alarmViewModel.sortOrderedAlarmIds)
 				alarmViewModel.sortOrderedAlarmIds = emptyList()
 			}
 			// Normal merge/sort logic
 			else
 			{
-				// No cards are expanded
-				if (alarmViewModel.expandedAlarmIds.isEmpty())
-				{
-					// Merge and sort the alarms
-					alarmCardAdapterLiveData.mergeSort(alarms)
-				}
-				// One or more cards is expanded
-				else
-				{
-					// Merge the alarms but do not sort yet
-					alarmCardAdapterLiveData.merge(alarms, copiedIds = recentlyCopiedAlarmIds)
-
-				}
+				refreshVisibleAlarms()
 			}
 
 		}
@@ -1347,11 +1450,14 @@ class NacShowAlarmsFragment
 				// too many changes are made at once before the list is submitted, this
 				// does not get called over and over. Instead it will just be called the
 				// last time
-				val nextAlarm = NacCalendar.getNextAlarm(alarms)
+				val nextAlarm = NacCalendar.getNextAlarm(latestAlarms)
 				setNextAlarmMessage(nextAlarm)
 
 				// Refresh alarm cards
 				refreshAlarmCardsShowingExtraView()
+
+				// Scroll to an alarm that was tapped in a group
+				scrollToAlarmToShow()
 
 			}
 
@@ -1582,7 +1688,7 @@ class NacShowAlarmsFragment
 		else
 		{
 			// When the next alarm will run
-			val next = nextAlarm ?: NacCalendar.getNextAlarm(alarmCardAdapter.currentList)
+			val next = nextAlarm ?: NacCalendar.getNextAlarm(latestAlarms)
 			NacCalendar.Message.getNext(context, next?.calendar, sharedPreferences.nextAlarmFormat)
 		}
 
