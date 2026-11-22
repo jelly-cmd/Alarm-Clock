@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Jelly Alarm: compact timer card, one row instead of a large circle -->
 <androidx.cardview.widget.CardView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/nac_card"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	app:contentPaddingTop="@dimen/normal"
-	app:contentPaddingBottom="@dimen/normal"
+	app:contentPaddingTop="@dimen/tiny"
+	app:contentPaddingBottom="@dimen/tiny"
 	app:contentPaddingLeft="@dimen/normal"
 	app:contentPaddingRight="@dimen/normal"
 	app:cardBackgroundColor="?attr/colorCard">
@@ -25,36 +26,26 @@
 			app:layout_constraintTop_toTopOf="parent"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			/>
-
-		<!-- Name -->
-		<TextView
-			style="@style/My.Timer.NameText.Card"
-			android:id="@+id/timer_name"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:text=""
-			app:layout_constraintBottom_toTopOf="@id/timer_seconds"
-			app:layout_constraintStart_toStartOf="@id/timer_progress"
-			app:layout_constraintEnd_toEndOf="@id/timer_progress"
 			/>
 
 		<!-- Hour -->
 		<TextView
 			style="@style/My.Timer.TimeText.Card"
 			android:id="@+id/timer_hour"
-			app:layout_constraintTop_toTopOf="@id/timer_progress"
-			app:layout_constraintBottom_toBottomOf="@id/timer_progress"
-			app:layout_constraintStart_toStartOf="@id/timer_progress"
+			android:layout_marginStart="@dimen/normal"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toTopOf="@id/timer_name"
+			app:layout_constraintVertical_chainStyle="packed"
+			app:layout_constraintStart_toEndOf="@id/timer_progress"
 			app:layout_constraintEnd_toStartOf="@id/timer_hour_units"
 			app:layout_constraintHorizontal_chainStyle="packed"
+			app:layout_constraintHorizontal_bias="0"
 			/>
 
 		<TextView
-			style="@style/My.Timer.UnitsText"
+			style="@style/My.Timer.UnitsText.Card"
 			android:id="@+id/timer_hour_units"
-			android:layout_marginEnd="@dimen/tiny"
+			android:layout_marginEnd="@dimen/nudge"
 			android:text="@string/letter_h"
 			app:layout_constraintStart_toEndOf="@id/timer_hour"
 			app:layout_constraintEnd_toStartOf="@id/timer_minute"
@@ -65,40 +56,55 @@
 		<TextView
 			style="@style/My.Timer.TimeText.Card"
 			android:id="@+id/timer_minute"
-			app:layout_constraintTop_toTopOf="@id/timer_progress"
-			app:layout_constraintBottom_toBottomOf="@id/timer_progress"
 			app:layout_constraintStart_toEndOf="@id/timer_hour_units"
 			app:layout_constraintEnd_toStartOf="@id/timer_minute_units"
+			app:layout_constraintBaseline_toBaselineOf="@id/timer_seconds"
 			/>
 
 		<TextView
-			style="@style/My.Timer.UnitsText"
+			style="@style/My.Timer.UnitsText.Card"
 			android:id="@+id/timer_minute_units"
-			android:layout_marginEnd="@dimen/tiny"
+			android:layout_marginEnd="@dimen/nudge"
 			android:text="@string/letter_m"
 			app:layout_constraintStart_toEndOf="@id/timer_minute"
 			app:layout_constraintEnd_toStartOf="@id/timer_seconds"
-			app:layout_constraintBaseline_toBaselineOf="@id/timer_minute"
+			app:layout_constraintBaseline_toBaselineOf="@id/timer_seconds"
 			/>
 
 		<!-- Seconds -->
 		<TextView
 			style="@style/My.Timer.TimeText.Card"
 			android:id="@+id/timer_seconds"
-			app:layout_constraintTop_toTopOf="@id/timer_progress"
-			app:layout_constraintBottom_toBottomOf="@id/timer_progress"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toTopOf="@id/timer_name"
+			app:layout_constraintVertical_chainStyle="packed"
 			app:layout_constraintStart_toEndOf="@id/timer_minute_units"
 			app:layout_constraintEnd_toStartOf="@id/timer_seconds_units"
 			/>
 
 		<TextView
-			style="@style/My.Timer.UnitsText"
+			style="@style/My.Timer.UnitsText.Card"
 			android:id="@+id/timer_seconds_units"
 			android:layout_marginEnd="@dimen/zero"
 			android:text="@string/letter_s"
 			app:layout_constraintStart_toEndOf="@id/timer_seconds"
-			app:layout_constraintEnd_toEndOf="@id/timer_progress"
+			app:layout_constraintEnd_toStartOf="@id/timer_reset_button"
 			app:layout_constraintBaseline_toBaselineOf="@id/timer_seconds"
+			/>
+
+		<!-- Name, below the time -->
+		<TextView
+			style="@style/My.Timer.NameText.Card"
+			android:id="@+id/timer_name"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="@dimen/normal"
+			android:gravity="start"
+			android:text=""
+			app:layout_constraintTop_toBottomOf="@id/timer_seconds"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toEndOf="@id/timer_progress"
+			app:layout_constraintEnd_toStartOf="@id/timer_reset_button"
 			/>
 
 		<!-- Reset timer -->
@@ -107,12 +113,11 @@
 			android:id="@+id/timer_reset_button"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_marginEnd="@dimen/tiny"
 			android:visibility="gone"
 			app:icon="@drawable/autorenew_32"
-			app:layout_constraintHorizontal_chainStyle="packed"
-			app:layout_constraintTop_toBottomOf="@id/timer_seconds"
-			app:layout_constraintBottom_toBottomOf="@id/timer_progress"
-			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toStartOf="@id/timer_start_button"
 			/>
 
@@ -123,9 +128,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			app:icon="@drawable/play"
-			app:layout_constraintTop_toBottomOf="@id/timer_seconds"
-			app:layout_constraintBottom_toBottomOf="@id/timer_progress"
-			app:layout_constraintStart_toEndOf="@id/timer_reset_button"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			/>
 
@@ -135,7 +139,6 @@
 			android:id="@+id/timer_pause_button"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginBottom="@dimen/zero"
 			android:visibility="invisible"
 			app:icon="@drawable/pause_32"
 			app:layout_constraintTop_toTopOf="@id/timer_start_button"
@@ -144,7 +147,7 @@
 			app:layout_constraintEnd_toEndOf="@id/timer_start_button"
 			/>
 
-		<!-- Stop timer -->
+		<!-- Stop timer, shown in place of the start button while ringing -->
 		<com.google.android.material.button.MaterialButton
 			style="@style/My.Timer.IconButton.InsideTimer.Card"
 			android:id="@+id/timer_stop_button"
@@ -152,9 +155,8 @@
 			android:layout_height="wrap_content"
 			android:visibility="invisible"
 			app:icon="@drawable/stop_32"
-			app:layout_constraintTop_toBottomOf="@id/timer_seconds"
-			app:layout_constraintBottom_toBottomOf="@id/timer_progress"
-			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			/>
 
@@ -165,11 +167,11 @@
 			android:contentDescription="@string/cd_scan_nfc"
 			android:src="@drawable/tap_and_play"
 			android:visibility="invisible"
-			app:layout_constraintTop_toBottomOf="@id/timer_seconds"
-			app:layout_constraintBottom_toBottomOf="@id/timer_progress"
-			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			/>
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>

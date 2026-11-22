@@ -34,7 +34,8 @@
 
 	<!-- Card circular progress -->
 	<style name="My.Timer.CircularProgressIndicator.Card" parent="My.Timer.CircularProgressIndicator">
-		<item name="indicatorSize">260dp</item>
+		<item name="indicatorSize">44dp</item>
+		<item name="trackThickness">4dp</item>
 	</style>
 
 	<!-- Name text -->
@@ -50,7 +51,11 @@
 
 	<!-- Card name text -->
 	<style name="My.Timer.NameText.Card" parent="My.Timer.NameText.Active">
-		<item name="android:textSize">@dimen/tsz_normal</item>
+		<item name="android:layout_marginBottom">@dimen/zero</item>
+		<item name="android:layout_marginEnd">@dimen/tiny</item>
+		<item name="android:maxLines">1</item>
+		<item name="android:textAlignment">viewStart</item>
+		<item name="android:textSize">@dimen/tsz_small</item>
 	</style>
 
 	<!-- Time text -->
@@ -70,7 +75,7 @@
 
 	<!-- Card time text -->
 	<style name="My.Timer.TimeText.Card" parent="My.Timer.TimeText.Active">
-		<item name="android:textSize">@dimen/tsz_xxhuge</item>
+		<item name="android:textSize">@dimen/tsz_xlarge</item>
 		<item name="android:textStyle">bold</item>
 		<item name="android:text">@string/number00</item>
 	</style>
@@ -158,7 +163,13 @@
 
 	<!-- Card button inside timer -->
 	<style name="My.Timer.IconButton.InsideTimer.Card" parent="My.Timer.IconButton.InsideTimer">
-		<item name="iconSize">@dimen/isz_xlarge</item>
+		<item name="android:layout_marginBottom">@dimen/zero</item>
+		<item name="iconSize">@dimen/isz_medium</item>
+	</style>
+
+	<!-- Card units text -->
+	<style name="My.Timer.UnitsText.Card" parent="My.Timer.UnitsText">
+		<item name="android:textSize">@dimen/tsz_small</item>
 	</style>
 
 	<!-- NFC icon -->
