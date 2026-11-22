@@ -37,6 +37,14 @@ android {
 
 	// Configuration for signing the app on release builds. The keystore.properties file must exist
 	signingConfigs {
+		// Jelly Alarm: fixed debug key so that new builds can be installed over old ones
+		getByName("debug") {
+			storeFile = file("jelly-debug.keystore")
+			storePassword = "android"
+			keyAlias = "androiddebugkey"
+			keyPassword = "android"
+		}
+
 		create("release") {
 			if (keystorePropertiesFile.exists()) {
 				keyAlias = keystoreProperties["keyAlias"] as String
