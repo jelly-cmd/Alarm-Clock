@@ -157,7 +157,7 @@ class NacAlarmGroupController(
 			val editView: ImageView = row.findViewById(R.id.iv_alarm_group_edit)
 			val switch: SwitchCompat = row.findViewById(R.id.switch_alarm_group)
 			val memberContainer: LinearLayout = row.findViewById(R.id.ll_alarm_group_members)
-			val members = alarmsInGroup(group).sorted()
+			val members = alarmsInGroup(group).sortedWith(BY_TIME)
 			val isExpanded = expandedGroupIds.contains(group.id)
 
 			// Name and count
@@ -416,7 +416,7 @@ class NacAlarmGroupController(
 			return
 		}
 
-		val sortedAlarms = alarms.sorted()
+		val sortedAlarms = alarms.sortedWith(BY_TIME)
 		val labels = sortedAlarms.map { alarmLabel(it) }.toTypedArray()
 		val ids = group.alarmIdSet()
 		val checked = sortedAlarms.map { ids.contains(it.id) }.toBooleanArray()
@@ -509,6 +509,17 @@ class NacAlarmGroupController(
 				alarmGroupViewModel.update(group)
 			}
 		}
+	}
+
+	companion object
+	{
+
+		/**
+		 * Sort alarms by time of day, then by name.
+		 */
+		private val BY_TIME: Comparator<NacAlarm> =
+			compareBy<NacAlarm>({ it.hour }, { it.minute }, { it.name.lowercase() })
+
 	}
 
 }

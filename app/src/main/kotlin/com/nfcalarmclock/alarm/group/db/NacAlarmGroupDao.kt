@@ -17,7 +17,7 @@ interface NacAlarmGroupDao
 	/**
 	 * Get all alarm groups.
 	 */
-	@get:Query("SELECT * FROM alarm_group ORDER BY id ASC")
+	@get:Query("SELECT * FROM alarm_group ORDER BY name COLLATE NOCASE ASC, id ASC")
 	val allAlarmGroupsLive: LiveData<List<NacAlarmGroup>>
 
 	/**
@@ -29,7 +29,7 @@ interface NacAlarmGroupDao
 	/**
 	 * Get all alarm groups.
 	 */
-	@Query("SELECT * FROM alarm_group ORDER BY id ASC")
+	@Query("SELECT * FROM alarm_group ORDER BY name COLLATE NOCASE ASC, id ASC")
 	suspend fun getAllAlarmGroups(): List<NacAlarmGroup>
 
 	/**
