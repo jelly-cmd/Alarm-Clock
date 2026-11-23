@@ -31,8 +31,11 @@ android {
 		applicationId = "com.nfcalarmclock"
 		minSdk = 24
 		targetSdk = 36
-		versionCode = 656
-		versionName = "12.7.5"
+		// Jelly Alarm: every GitHub build gets a higher version, so it installs as an
+		// update over the previous build
+		val jellyBuild = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0
+		versionCode = 1000 + jellyBuild
+		versionName = "12.7.5-jelly.$jellyBuild"
 	}
 
 	// Configuration for signing the app on release builds. The keystore.properties file must exist

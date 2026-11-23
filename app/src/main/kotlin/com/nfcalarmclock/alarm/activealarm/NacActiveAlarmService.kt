@@ -685,8 +685,9 @@ class NacActiveAlarmService
 		// Create the wakeup process
 		wakeupProcess = NacWakeupProcess(this, lifecycleScope, alarm!!)
 
-		// Add a volume key press listener so that the volume keys can dismiss/snooze the alarm
-		if (alarm!!.shouldVolumeDismiss || alarm!!.shouldVolumeSnooze)
+		// Add a volume key press listener so that the volume keys can dismiss/snooze the alarm.
+		// Jelly Alarm: the side (volume) buttons always snooze, unless volume dismiss is on
+		if (alarm!!.shouldVolumeDismiss || alarm!!.shouldVolumeSnooze || NacVolumeManager.ALWAYS_VOLUME_SNOOZE)
 		{
 			wakeupProcess!!.volumeManager.onVolumeKeyPressListener = NacVolumeManager.OnVolumeKeyPressListener {
 

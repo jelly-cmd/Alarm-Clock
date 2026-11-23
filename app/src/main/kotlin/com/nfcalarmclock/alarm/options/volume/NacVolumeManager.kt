@@ -201,7 +201,7 @@ class NacVolumeManager(
 		initialVolume = audioManager.getSafeStreamVolume(audioAttributes.stream)
 
 		// Watch for volume key press
-		if (alarm.shouldVolumeDismiss || alarm.shouldVolumeSnooze)
+		if (alarm.shouldVolumeDismiss || alarm.shouldVolumeSnooze || ALWAYS_VOLUME_SNOOZE)
 		{
 			volumeKeyPressWatchdog()
 		}
@@ -275,6 +275,11 @@ class NacVolumeManager(
 
 	companion object
 	{
+
+		/**
+		 * Jelly Alarm: always let the volume (side) buttons snooze a ringing alarm.
+		 */
+		const val ALWAYS_VOLUME_SNOOZE = true
 
 		/**
 		 * Period at which to ensure the volume is restricted.
