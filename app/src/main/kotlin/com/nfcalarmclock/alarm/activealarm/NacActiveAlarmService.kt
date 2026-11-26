@@ -131,6 +131,12 @@ class NacActiveAlarmService
 	private var startTime: Long = 0
 
 	/**
+	 * Whether the alarm was muted. The alarm is still active and must be snoozed or
+	 * dismissed (with NFC, if required) as usual.
+	 */
+	private var isMuted: Boolean = false
+
+	/**
 	 * Attempt to snooze.
 	 */
 	fun attemptSnooze()
@@ -152,6 +158,43 @@ class NacActiveAlarmService
 				}
 			}
 		}
+	}
+
+	/**
+	 * Mute the alarm.
+	 *
+	 * This stops the music, text-to-speech, vibration, and flashlight, but the alarm
+	 * stays active. It still needs to be snoozed or dismissed, so an alarm that
+	 * requires NFC still requires NFC.
+	 */
+	@UnstableApi
+	fun mute()
+	{
+		// Already muted
+		if (isMuted)
+		{
+			return
+		}
+
+		// No alarm is ringing in this service, e.g. the service was started only to
+		// handle this mute request
+		if (wakeupProcess == null)
+		{
+			NacLog.w("Unable to mute because no alarm is ringing")
+			stopThisService()
+			return
+		}
+
+		NacLog.i("Muting active alarm")
+
+		// Stop the wakeup process (or keep it from starting if it is still delayed)
+		isMuted = true
+		wakeupProcessDelayHandler.removeCallbacksAndMessages(null)
+		wakeupProcess?.cleanup()
+		wakeupProcess = null
+
+		// Update the notification so that the mute button is no longer shown
+		showActiveAlarmNotification()
 	}
 
 	/**
@@ -433,6 +476,9 @@ class NacActiveAlarmService
 			// Snooze
 			ACTION_SNOOZE_ALARM -> attemptSnooze()
 
+			// Mute
+			ACTION_MUTE_ALARM -> mute()
+
 			// The default case if things go wrong
 			else -> stopThisService()
 
@@ -534,6 +580,9 @@ class NacActiveAlarmService
 			else
 			{
 				updateTimeActiveOfCurrentAlarm()
+
+				// The new alarm should ring, even if the previous one was muted
+				isMuted = false
 			}
 		}
 
@@ -559,7 +608,7 @@ class NacActiveAlarmService
 	private fun showActiveAlarmNotification()
 	{
 		// Create the active alarm notification
-		val notification = NacActiveAlarmNotification(this, alarm)
+		val notification = NacActiveAlarmNotification(this, alarm, isMuted)
 
 		// Start the service in the foreground
 		showForegroundNotification {
@@ -862,6 +911,11 @@ class NacActiveAlarmService
 		const val ACTION_SNOOZE_ALARM = "com.nfcalarmclock.ACTION_SNOOZE_ALARM"
 
 		/**
+		 * Action to mute the alarm.
+		 */
+		const val ACTION_MUTE_ALARM = "com.nfcalarmclock.ACTION_MUTE_ALARM"
+
+		/**
 		 * Action to do when alarms are equal. This is to say when the service
 		 * is started with the same alarm.
 		 */
@@ -897,6 +951,18 @@ class NacActiveAlarmService
 		{
 			// Create the intent with the alarm service
 			return Intent(ACTION_DISMISS_ALARM, null, context, NacActiveAlarmService::class.java)
+				.addAlarm(alarm)
+		}
+
+		/**
+		 * Get an intent that will be used to mute the active alarm.
+		 *
+		 * @return An intent that will be used to mute the active alarm.
+		 */
+		fun getMuteIntent(context: Context, alarm: NacAlarm?): Intent
+		{
+			// Create the intent with the alarm service
+			return Intent(ACTION_MUTE_ALARM, null, context, NacActiveAlarmService::class.java)
 				.addAlarm(alarm)
 		}
 

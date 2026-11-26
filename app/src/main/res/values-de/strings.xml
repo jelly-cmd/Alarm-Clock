@@ -75,6 +75,7 @@
 	<!-- Actions -->
 	<string name="action_get_started">Los geht\'s</string>
 	<string name="action_alarm_snooze">Schlummern</string>
+	<string name="action_alarm_mute">Stumm</string>
 	<string name="action_alarm_dismiss">Zurückweisen</string>
 	<string name="action_alarm_dismiss_early">Frühzeitig entlassen</string>
 	<string name="action_alarm_copy">Kopie</string>

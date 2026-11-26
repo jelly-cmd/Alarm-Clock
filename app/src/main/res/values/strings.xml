@@ -75,6 +75,7 @@
 	<!-- Actions -->
 	<string name="action_get_started">Get Started</string>
 	<string name="action_alarm_snooze">Snooze</string>
+	<string name="action_alarm_mute">Mute</string>
 	<string name="action_alarm_dismiss">Dismiss</string>
 	<string name="action_alarm_dismiss_early">Dismiss early</string>
 	<string name="action_alarm_copy">Copy</string>

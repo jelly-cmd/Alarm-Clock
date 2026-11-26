@@ -1,6 +1,7 @@
 package com.nfcalarmclock.alarm.activealarm
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.PendingIntent
 import android.content.Context
@@ -25,11 +26,14 @@ import java.util.Calendar
  *
  * @param context Context.
  * @param alarm Alarm.
+ * @param isMuted Whether the alarm was muted (sound and vibration stopped) but is
+ *                still active.
  */
 @SuppressLint("FullScreenIntentPolicy")
 class NacActiveAlarmNotification(
 	context: Context,
-	private val alarm: NacAlarm?
+	private val alarm: NacAlarm?,
+	private val isMuted: Boolean = false
 ) : NacBaseNotificationBuilder(context, "NacNotiChannelActiveAlarm")
 {
 
@@ -138,6 +142,22 @@ class NacActiveAlarmNotification(
 		}
 
 	/**
+	 * The pending intent to use when muting the alarm.
+	 */
+	private val mutePendingIntent: PendingIntent
+		@OptIn(UnstableApi::class)
+		get()
+		{
+			val intent = NacActiveAlarmService.getMuteIntent(context, alarm)
+
+			// Determine the pending intent flags
+			val flags = PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+
+			// Create the pending intent
+			return PendingIntent.getService(context, 0, intent, flags)
+		}
+
+	/**
 	 * Whether the alarm should use NFC or not.
 	 */
 	private val shouldUseNfc: Boolean
@@ -172,7 +192,17 @@ class NacActiveAlarmNotification(
 			.setAutoCancel(false)
 			.setOngoing(true)
 			.setShowWhen(true)
+			// Show the full notification, including its buttons, on the lock screen so
+			// the alarm can be muted or snoozed without unlocking the phone
+			.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 			.setSound(null) as NacBaseNotificationBuilder)
+			.apply {
+				// Mute the alarm. It keeps running until it is snoozed or dismissed
+				if (!isMuted)
+				{
+					addAction(R.drawable.volume_off, R.string.action_alarm_mute, mutePendingIntent)
+				}
+			}
 			.addAction(R.drawable.snooze, R.string.action_alarm_snooze, snoozePendingIntent)
 			.apply {
 				// Check if NFC does not need to be used to dismiss the alarm
@@ -208,6 +238,7 @@ class NacActiveAlarmNotification(
 		channel.enableVibration(false)
 		channel.setSound(null, null)
 		channel.setBypassDnd(true)
+		channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
 
 		return channel
 	}
