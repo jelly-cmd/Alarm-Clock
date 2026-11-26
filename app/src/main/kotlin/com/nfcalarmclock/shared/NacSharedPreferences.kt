@@ -3119,6 +3119,24 @@ class NacSharedPreferences(context: Context)
 		}
 
 	/**
+	 * Whether the USE_FULL_SCREEN_INTENT permission was requested.
+	 */
+	var wasFullScreenIntentPermissionRequested: Boolean
+		get()
+		{
+			val key = resources.getString(R.string.key_permission_full_screen_intent_requested)
+			val defaultValue = false
+
+			return instance.getBoolean(key, defaultValue)
+		}
+		set(value)
+		{
+			val key = resources.getString(R.string.key_permission_full_screen_intent_requested)
+
+			saveBoolean(key, value)
+		}
+
+	/**
 	 * Whether the SYSTEM_ALERT_WINDOW permission was requested.
 	 */
 	var wasSystemAlertWindowPermissionRequested: Boolean
@@ -3201,6 +3219,7 @@ class NacSharedPreferences(context: Context)
 			resources.getString(R.string.key_main_delay_showing_whats_new_dialog_counter),
 			resources.getString(R.string.key_permission_ignore_battery_optimization_requested),
 			resources.getString(R.string.key_permission_post_notifications_requested),
+			resources.getString(R.string.key_permission_full_screen_intent_requested),
 			resources.getString(R.string.key_permission_schedule_exact_alarm_requested),
 			resources.getString(R.string.key_app_previous_version),
 			resources.getString(R.string.sys_previous_volume),

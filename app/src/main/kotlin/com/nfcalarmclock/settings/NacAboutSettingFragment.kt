@@ -5,6 +5,7 @@ import androidx.preference.Preference
 import com.nfcalarmclock.BuildConfig
 import com.nfcalarmclock.R
 import com.nfcalarmclock.log.NacLog
+import com.nfcalarmclock.system.permission.fullscreenintent.NacFullScreenIntentPermission
 import com.nfcalarmclock.system.permission.ignorebatteryoptimization.NacIgnoreBatteryOptimizationPermission
 import com.nfcalarmclock.system.permission.postnotifications.NacPostNotificationsPermission
 import com.nfcalarmclock.system.permission.readmediaaudio.NacReadMediaAudioPermission
@@ -132,8 +133,18 @@ class NacAboutSettingFragment
 		// Full screen
 		else if (preferenceKey == fullScreenKey)
 		{
-			NacLog.i("App already has full screen permission")
-			quickToast(context, messageId)
+			// Show toast to the user saying that the app already has the permission
+			if (NacFullScreenIntentPermission.hasPermission(context))
+			{
+				NacLog.i("App already has full screen permission")
+				quickToast(context, messageId)
+			}
+			// Open the system setting so the user can allow it
+			else
+			{
+				NacLog.i("Opening full screen permission setting")
+				NacFullScreenIntentPermission.requestPermission(activity)
+			}
 		}
 		// Schedule exact alarms
 		else if (preferenceKey == scheduleAlarmsKey)

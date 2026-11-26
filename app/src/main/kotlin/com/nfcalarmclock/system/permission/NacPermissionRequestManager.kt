@@ -6,6 +6,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import com.nfcalarmclock.shared.NacSharedPreferences
 import com.nfcalarmclock.system.permission.NacPermissionRequestDialog.OnPermissionRequestListener
+import com.nfcalarmclock.system.permission.fullscreenintent.NacFullScreenIntentPermission
+import com.nfcalarmclock.system.permission.fullscreenintent.NacFullScreenIntentPermissionRequestDialog
 import com.nfcalarmclock.system.permission.postnotifications.NacPostNotificationsPermission
 import com.nfcalarmclock.system.permission.postnotifications.NacPostNotificationsPermissionRequestDialog
 import com.nfcalarmclock.system.permission.systemalertwindow.NacSystemAlertWindowPermission
@@ -25,6 +27,7 @@ class NacPermissionRequestManager(activity: AppCompatActivity)
 	{
 		//IGNORE_BATTERY_OPTIMIZATION,
 		POST_NOTIFICATIONS,
+		FULL_SCREEN_INTENT,
 		SYSTEM_ALERT_WINDOW
 	}
 
@@ -83,6 +86,12 @@ class NacPermissionRequestManager(activity: AppCompatActivity)
 		if (NacPostNotificationsPermission.shouldRequestPermission(context, shared))
 		{
 			set.add(Permission.POST_NOTIFICATIONS)
+		}
+
+		// Full screen intent, to show a ringing alarm on the lock screen
+		if (NacFullScreenIntentPermission.shouldRequestPermission(context, shared))
+		{
+			set.add(Permission.FULL_SCREEN_INTENT)
 		}
 
 		// System alert window
@@ -171,6 +180,11 @@ class NacPermissionRequestManager(activity: AppCompatActivity)
 		if (permissionRequestSet.contains(Permission.POST_NOTIFICATIONS))
 		{
 			showPostNotificationPermissionDialog(activity, onDone=onDone)
+		}
+		// Full screen intent
+		else if (permissionRequestSet.contains(Permission.FULL_SCREEN_INTENT))
+		{
+			showFullScreenIntentPermissionDialog(activity, onDone=onDone)
 		}
 		// System alert window
 		else if (permissionRequestSet.contains(Permission.SYSTEM_ALERT_WINDOW))
@@ -271,6 +285,44 @@ class NacPermissionRequestManager(activity: AppCompatActivity)
 		// Show the dialog
 		dialog.show(activity.supportFragmentManager,
 			NacPostNotificationsPermissionRequestDialog.TAG)
+	}
+
+	/**
+	 * Show the dialog to request the USE_FULL_SCREEN_INTENT permission.
+	 */
+	fun showFullScreenIntentPermissionDialog(activity: AppCompatActivity, onDone: () -> Unit = {})
+	{
+		// Do nothing if an older version of Android is being used
+		if (!NacFullScreenIntentPermission.isCorrectAndroidVersion)
+		{
+			return
+		}
+
+		// Create the dialog
+		val dialog = NacFullScreenIntentPermissionRequestDialog()
+
+		// Setup the current position and total number of pages in the dialog
+		setupDialogPageInfo(dialog)
+
+		// Handle the cases where the permission request is accepted/canceled
+		dialog.onPermissionRequestListener = object : OnPermissionRequestListener
+		{
+			override fun onPermissionRequestAccepted(permission: String)
+			{
+				permissionRequestSet.remove(Permission.FULL_SCREEN_INTENT)
+				NacFullScreenIntentPermission.requestPermission(activity)
+			}
+
+			override fun onPermissionRequestCanceled(permission: String)
+			{
+				permissionRequestSet.remove(Permission.FULL_SCREEN_INTENT)
+				showNextPermissionRequestDialog(activity, onDone=onDone)
+			}
+		}
+
+		// Show the dialog
+		dialog.show(activity.supportFragmentManager,
+			NacFullScreenIntentPermissionRequestDialog.TAG)
 	}
 
 	/**
